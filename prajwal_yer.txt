@@ -1,0 +1,67 @@
+### Year-End Review  
+
+**Overview**  
+I joined the team at the end of December last year and started contributing actively from the first week of January. Over the past year, I have had the opportunity to work on several challenging initiatives and projects under the Opex program, which have greatly enhanced my technical skills and professional growth. I am honored to have received a **Gold Award** for my work in Opex and a **great review from the team** for delivering high-quality contributions with **bug-free code and zero production issues**. Below are the key contributions I made this year:  
+
+---
+
+#### **Key Contributions**  
+
+1. **Real-Time (RT) Tables Development**:  
+   - Completed the addition of new columns to RT tables within two months, delivering demos ahead of deadlines.  
+   - Gained expertise in RT tables, optimization techniques, parallel programming with Hugs, and the end-to-end process of creating and using RT tables.  
+   - Worked on UI components related to these new columns.  
+
+2. **Successful Release and Deployment**:  
+   - Supported the release deployment from India, ensuring changes were released smoothly and handled CRQs and related paperwork effectively.  
+
+3. **Chasing Workflow Implementation**:  
+   - Developed a new chasing workflow from scratch, including implementing all UI components and backend logic.  
+   - Delivered the project well before the deadline and provided early demos showcasing functionality.  
+   - Worked on task creation using the publisher-subscriber model in AMPS and task updates for qztask UI.  
+   - Implemented various feature enhancements for user tasks within the chasing workflow.  
+
+4. **Affirmation Workflow Implementation**:  
+   - Developed a big feature—the **email panel**—from scratch within a short timeline.  
+   - The email panel mimics Outlook functionalities like sending, receiving, replying, attaching files, and finding names while adhering to bank guidelines and validations.  
+   - Designed a sweeper job to tag all emails (sent/received) with a unique ID, ensuring they are linked to the correct tasks or creating new chaser objects as required.  
+   - Built an intuitive, user-friendly UI for the email panel with advanced functionalities and validations.  
+   - Enhanced the email integration process, including auto-populating CC addresses when counterparts missed them.  
+   - Achieved a bug-free production release for this feature.  
+
+5. **UI Enhancements and Workflow Support**:  
+   - Fixed multiple issues in the affirmation workflow and attachment-related tasks on both UI and backend.  
+   - Developed a new **attachment panel** and **header panel** with user-friendly UI for confirmations, integrating validations and custom solutions.  
+   - Created a **document attachment panel** with standardized modals for seamless document uploads while complying with bank policies.  
+
+6. **Affirmation DK Workflow**:  
+   - Designed and implemented the affirmation DK workflow, allowing users to create tasks directly from the UI with necessary validations and modals.  
+   - Delivered these changes successfully to production with a bug-free release.  
+
+7. **Root Cause Analysis (RCA)**:  
+   - Developed an RCA object to calculate trade-level RCA values through an automated job and published results to Drum.  
+   - Worked with ops users to validate RCA results, receiving approval through daily monitoring.  
+
+8. **Supervisory Dashboard Development**:  
+   - Implemented major functionalities of the supervisory dashboard within a short timeline.  
+   - Designed and built new frontend and backend services from scratch while learning about Quartz's system architecture and Qzdocs functionality.  
+
+9. **Collaborative Efforts**:  
+   - Collaborated across teams to identify and fix bugs in various codebases before production releases.  
+   - Assisted teammates with UI and backend changes, contributing to a smooth development and release cycle.  
+
+10. **Performance Testing**:  
+    - Contributed to performance testing for all releases, ensuring the builds met quality and performance standards.  
+
+---
+
+#### **Achievements**  
+- **Gold Award**: Received for exceptional contributions to the Opex program.  
+- **Team Recognition**: Earned great feedback for delivering high-quality, bug-free code with no production issues.  
+
+---
+
+#### **Acknowledgments**  
+I would like to sincerely thank **Prabhanjan, Vikram, Suresh, and Guru** for their unwavering support and guidance throughout the year. Their mentorship, along with the encouragement from the entire team, has been instrumental in my growth. I am incredibly grateful for the collaborative and supportive environment provided by the team, which has made this a remarkable year of learning and development.  
+
+---
