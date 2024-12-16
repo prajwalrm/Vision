@@ -1,0 +1,22 @@
+Automation and Process Improvements
+* Enabled Automatic Certificate Creator Jobs: Successfully worked on automating certificate creation jobs for both qzdocs and qzmatch. This included:
+    * Raising and securing the necessary access requests for the Venafi portal.
+    * Setting up UAT and development environments for Venafi to ensure the job works as expected.
+    * Modifying existing scripts to seamlessly integrate with our applications.
+2. Sprint Support and Issue Resolution
+* Actively provided support for the sprint, addressing and resolving the following issues:
+    1. Added validation to the "Due Date LS" field in the task validation form within qz.
+    2. Assisted in resolving other sprint-related tasks and blockers.
+3. Bug Fixes and Enhancements
+* Source/Broker Code Fix: Resolved issues in the source/broker script by identifying and adding the missing setup.
+* Termination of Child/Intermediary Legs: Developed a robust solution for suppressing child legs based on multiple criteria, including:
+    * Identifying parent trades based on the admin ID.
+    * Analyzing the system entry timestamps of trades.
+    * Verifying back-office IDs. Leveraged these criteria to ensure accurate suppression of child legs under defined conditions.
+4. Administrative Updates
+* JIRA for Signature Changes: Replaced the authorized signatory on BANA STPed confirmations from Jyothi Dixit to Hardik Shah.
+* Service ID Password Updates: Proactively updated passwords for expiring service IDs and documented the process for future reference.
+* Name Update in FRO Table: Updated the name in the FRO table for MCN-TIIE-Banxico.
+5. Testing and Collaboration
+* Assisted Linton with testing for the ASIC and MAS UTI release to ensure compliance and smooth rollout.
+Through the year, I prioritized automation, process optimization, and cross-functional collaboration, contributing to the team's efficiency and goal achievement.
