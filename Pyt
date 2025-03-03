@@ -1,0 +1,67 @@
+import cv2
+import numpy as np
+import pytesseract
+from pdf2image import convert_from_path
+import matplotlib.pyplot as plt
+
+# Function to process an image (detect highlighted/circled text and extract)
+def process_image(image_path):
+    # Read the image
+    image = cv2.imread(image_path)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Apply edge detection (for circled text)
+    edges = cv2.Canny(gray, 50, 150)
+
+    # Detect circles using HoughCircles
+    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT, dp=1.2, minDist=30,
+                               param1=50, param2=30, minRadius=5, maxRadius=100)
+
+    # Detect highlighted text (assuming yellow highlight)
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    lower_yellow = np.array([20, 100, 100])
+    upper_yellow = np.array([30, 255, 255])
+    mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+
+    # Extract contours from highlighted areas
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Create a copy to draw on
+    output = image.copy()
+
+    # Process circles
+    if circles is not None:
+        circles = np.uint16(np.around(circles))
+        for i in circles[0, :]:
+            x, y, r = i
+            cv2.circle(output, (x, y), r, (0, 255, 0), 2)
+            roi = gray[y-r:y+r, x-r:x+r]
+            text = pytesseract.image_to_string(roi)
+            print(f"Detected Circled Text: {text}")
+
+    # Process highlighted text
+    for cnt in contours:
+        x, y, w, h = cv2.boundingRect(cnt)
+        cv2.rectangle(output, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        roi = gray[y:y+h, x:x+w]
+        text = pytesseract.image_to_string(roi)
+        print(f"Detected Highlighted Text: {text}")
+
+    # Show results
+    plt.imshow(cv2.cvtColor(output, cv2.COLOR_BGR2RGB))
+    plt.title("Detected Circles & Highlights")
+    plt.show()
+
+# Function to process a PDF (convert to image first)
+def process_pdf(pdf_path):
+    images = convert_from_path(pdf_path)
+    for i, image in enumerate(images):
+        image_path = f"page_{i}.png"
+        image.save(image_path, "PNG")
+        process_image(image_path)
+
+# Test with an image (Replace with your file path)
+process_image("sample_image.jpg")
+
+# Test with a PDF (Replace with your file path)
+# process_pdf("sample.pdf")
