@@ -1,0 +1,137 @@
+import cv2
+import numpy as np
+from tensorflow.keras.models import load_model
+
+### Step 1: Load Trained OCR Model ###
+ocr_model = load_model("ocr_digit_model_offline.h5")  # Load trained model
+
+def recognize_character(char_image):
+    """
+    Recognizes a single character using the trained OCR model.
+    """
+    char_image = cv2.resize(char_image, (28,28))
+
+    # Normalize pixel values
+    char_image = char_image.astype("float32") / 255.0
+    char_image = np.expand_dims(char_image, axis=0)  # Add batch dimension
+    char_image = np.expand_dims(char_image, axis=-1) # Add channel dimension
+
+    # Predict character
+    prediction = ocr_model.predict(char_image)
+    predicted_class = np.argmax(prediction)
+
+    return str(predicted_class)  # Convert digit to string
+
+
+### Step 2: Detect and Extract Highlighted Text ###
+def extract_highlighted_text(image_path):
+    """
+    Detects yellow-highlighted text using OpenCV and processes it for OCR.
+    """
+    image = cv2.imread(image_path)
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    # Detect yellow-highlighted areas
+    lower_yellow = np.array([20, 100, 100])
+    upper_yellow = np.array([30, 255, 255])
+    yellow_mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+
+    # Find contours of highlighted text
+    contours, _ = cv2.findContours(yellow_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    extracted_texts = []
+    total_price = 0
+
+    for cnt in contours:
+        x, y, w, h = cv2.boundingRect(cnt)
+
+        # Extract the highlighted region
+        highlighted_region = image[y:y+h, x:x+w]
+
+        # Convert to grayscale
+        gray = cv2.cvtColor(highlighted_region, cv2.COLOR_BGR2GRAY)
+
+        # Apply thresholding to enhance text visibility
+        _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)
+
+        # Perform OCR using the TensorFlow model
+        detected_text = extract_text_from_tensor(binary)
+
+        extracted_texts.append({"highlighted_text": detected_text})
+
+        # Check if it's a price and sum it
+        price_value = extract_price_from_text(detected_text)
+        if price_value is not None:
+            total_price += price_value
+
+    return extracted_texts, total_price
+
+
+### Step 3: Preprocess Image for OCR ###
+def preprocess_image(image):
+    """
+    Converts the highlighted text region to grayscale and applies thresholding.
+    """
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Apply adaptive thresholding
+    binary = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                   cv2.THRESH_BINARY_INV, 11, 2)
+    return binary
+
+
+### Step 4: Segment Individual Characters ###
+def segment_characters(image):
+    """
+    Finds individual characters by detecting contours in the processed image.
+    """
+    contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    character_images = []
+    for cnt in contours:
+        x, y, w, h = cv2.boundingRect(cnt)
+
+        # Ignore small regions (noise)
+        if w > 5 and h > 10:
+            char_image = image[y:y+h, x:x+w]
+            character_images.append((x, char_image))
+
+    # Sort characters from left to right
+    character_images = sorted(character_images, key=lambda c: c[0])
+
+    return [char[1] for char in character_images]
+
+
+### Step 5: Convert Image to Text Using OCR Model ###
+def extract_text_from_tensor(binary_image):
+    """
+    Uses OpenCV character segmentation and TensorFlow OCR model to extract text.
+    """
+    characters = segment_characters(binary_image)
+
+    recognized_text = ""
+    for char_img in characters:
+        recognized_text += recognize_character(char_img) + " "
+
+    return recognized_text.strip()
+
+
+### Step 6: Extract Prices from Text ###
+def extract_price_from_text(text):
+    """
+    Extracts numeric values from text if they represent a price.
+    """
+    import re
+    numbers = re.findall(r'\d+', text)  # Extract all numbers
+    total_price = sum(map(int, numbers))  # Sum numeric values
+    return total_price
+
+
+### Step 7: Run the Full OCR Pipeline ###
+image_path = "/mnt/data/image.png"  # Replace with your image path
+highlighted_texts, total_price = extract_highlighted_text(image_path)
+
+# Print results
+print("Extracted Highlighted Texts:")
+print(highlighted_texts)
+print("\nTotal Highlighted Price:", total_price)
