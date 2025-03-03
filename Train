@@ -1,0 +1,35 @@
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+import numpy as np
+
+# Generate synthetic data (random images with digit-like features)
+def generate_fake_digits(num_samples=1000):
+    x_data = np.random.rand(num_samples, 28, 28, 1)  # Random grayscale images
+    y_data = np.random.randint(0, 10, num_samples)   # Random labels (digits 0-9)
+    return x_data, y_data
+
+# Generate fake digit dataset
+x_train, y_train = generate_fake_digits(5000)
+x_test, y_test = generate_fake_digits(1000)
+
+# Define CNN model
+model = keras.Sequential([
+    layers.Conv2D(32, (3,3), activation="relu", input_shape=(28,28,1)),
+    layers.MaxPooling2D(pool_size=(2,2)),
+    layers.Conv2D(64, (3,3), activation="relu"),
+    layers.MaxPooling2D(pool_size=(2,2)),
+    layers.Flatten(),
+    layers.Dense(128, activation="relu"),
+    layers.Dense(10, activation="softmax")  # Output layer for digits 0-9
+])
+
+# Compile the model
+model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+
+# Train the model
+model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=3, batch_size=32)
+
+# Save the model locally
+model.save("ocr_digit_model_offline.h5")
+print("Offline model trained and saved as 'ocr_digit_model_offline.h5'")
