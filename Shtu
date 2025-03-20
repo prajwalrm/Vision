@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Load necessary environment files for permissions
+source /efs/dist/efs/environ/prod/common/etc/init.functions
+source /efs/dist/efs/environ/prod/common/etc/init.environ
+
+# Define directories
+TEMP_DIR="/temp"
+EFS_DIR="/efs/dist/ion/java"
+
+# Loop through all .jar files in the TEMP_DIR
+for jar_file in "$TEMP_DIR"/*.jar; do
+    # Extract the filename without extension
+    jar_name=$(basename "$jar_file" .jar)
+
+    # Extract package name and version correctly
+    # Split at the last '-' to separate version and package name
+    version=$(echo "$jar_name" | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?(-[A-Za-z0-9]+)?$')
+    package_name=${jar_name%"-$version"}
+
+    # Ensure package_name is valid (fallback check)
+    if [[ -z "$package_name" || -z "$version" ]]; then
+        echo "Error: Could not extract package name or version from '$jar_name'"
+        continue
+    fi
+
+    # Full package identifier
+    full_package="${package_name}-${version}"
+
+    echo "Processing $full_package ..."
+
+    # Step 1: Create release
+    efs create release ion java "$full_package"
+
+    # Step 2: Install the package
+    efs create install ion java "$full_package" common
+
+    # Step 3: Navigate to install location
+    INSTALL_DIR="$EFS_DIR/$full_package/install/common"
+    mkdir -p "$INSTALL_DIR/lib/$package_name"
+
+    # Step 4: Copy files (if they exist)
+    if [ -f "$TEMP_DIR/$jar_name.jar" ]; then
+        cp "$TEMP_DIR/$jar_name.jar" "$INSTALL_DIR/lib/$package_name/"
+    else
+        echo "Warning: $jar_name.jar not found!"
+    fi
+
+    if [ -f "$TEMP_DIR/$jar_name.pom" ]; then
+        cp "$TEMP_DIR/$jar_name.pom" "$INSTALL_DIR/lib/$package_name/"
+    else
+        echo "Warning: $jar_name.pom not found!"
+    fi
+
+    # Step 5: Checkpoint and distribute
+    efs checkpoint release ion java "$full_package"
+    efs dist release ion java "$full_package" --global
+
+    echo "$full_package processed successfully."
+done
+
+echo "All packages have been processed."
