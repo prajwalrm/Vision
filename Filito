@@ -1,0 +1,43 @@
+import java.io.*;
+import java.util.*;
+import java.nio.file.*;
+
+public class UniqueFolderNames {
+    public static void main(String[] args) {
+        // Specify the folder path
+        String folderPath = "/your/directory/path"; // Change this to your actual folder path
+        String outputFile = "unique_folders.txt"; // Output file
+
+        // Create a set to store unique folder names
+        Set<String> uniqueFolders = new HashSet<>();
+
+        // Get folder names
+        File folder = new File(folderPath);
+
+        if (folder.exists() && folder.isDirectory()) {
+            File[] files = folder.listFiles();
+
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        uniqueFolders.add(file.getName()); // Store folder name in Set (removes duplicates)
+                    }
+                }
+            }
+
+            // Write unique folder names to a text file
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+                for (String folderName : uniqueFolders) {
+                    writer.write(folderName);
+                    writer.newLine();
+                }
+                System.out.println("Unique folder names written to " + outputFile);
+            } catch (IOException e) {
+                System.err.println("Error writing to file: " + e.getMessage());
+            }
+
+        } else {
+            System.out.println("Invalid directory path!");
+        }
+    }
+}
