@@ -1,0 +1,7 @@
+efs create release ion java hazelcast-all-3.12.13 && 
+efs create install ion java hazelcast-all-3.12.13 common && 
+mkdir -p /efs/dev/ion/java/hazelcast-all-3.12.13/install/common/lib/hazelcast-all && 
+cp /temp/hazelcast-all-3.12.13.jar /efs/dev/ion/java/hazelcast-all-3.12.13/install/common/lib/hazelcast-all/ && 
+cp /temp/hazelcast-all-3.12.13.pom /efs/dev/ion/java/hazelcast-all-3.12.13/install/common/lib/hazelcast-all/ && 
+efs checkpoint release ion java hazelcast-all-3.12.13 && 
+efs dist release ion java hazelcast-all-3.12.13 --global
